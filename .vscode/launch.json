@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Debug Khuzdoor",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/khuzdoor",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb"
+    }
+  ]
+}
