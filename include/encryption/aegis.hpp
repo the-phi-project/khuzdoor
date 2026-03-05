@@ -27,8 +27,11 @@ std::string aegisGenKey();
 
 //================={ Header Item Separator }=================\\ 
 
-void aegisEncrypt(const std::string& data, const std::string& aegis_key, std::string& op_ciphertext,
-                  std::string& op_nonce);
+// if nonce is left blank, one will be generated and put into
+// the string reference
+// returns the ciphertext
+std::string aegisEncrypt(const std::string& data, const std::string& aegis_key,
+                         std::string& aegis_nonce);
 
 //================={ Header Item Separator }=================\\ 
 

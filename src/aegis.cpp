@@ -25,25 +25,26 @@ std::string khuzdoor::encryption::aegisGenKey() {
 
 //------------[ Func. Implementation Separator ]------------\\ 
 
-void khuzdoor::encryption::aegisEncrypt(const std::string& data, const std::string& aegis_key,
-                                        std::string& op_ciphertext, std::string& op_nonce) {
-  std::array<unsigned char, crypto_aead_aegis256_NPUBBYTES> nonce{};
-  randombytes_buf(nonce.data(), nonce.size());
+std::string khuzdoor::encryption::aegisEncrypt(const std::string& data,
+                                               const std::string& aegis_key,
+                                               std::string& aegis_nonce) {
+  if (aegis_nonce.empty()) {
+    randombytes_buf(aegis_nonce.data(), crypto_aead_aegis256_NPUBBYTES);
+  }
 
   std::vector<unsigned char> ciphertext(data.size() + crypto_aead_aegis256_ABYTES);
   crypto_aead_aegis256_encrypt(ciphertext.data(),  // ciphertext
                                nullptr,  // &ciphertext_len - unused b/c ciphertext stored in string
                                reinterpret_cast<const unsigned char*>(data.data()),  // message
-                               data.size(),   // message length
-                               nullptr,       // additional data
-                               0,             // additional data length
-                               NULL,          // secret nonce, idek why libsodium has this
-                               nonce.data(),  // nonce
-                               reinterpret_cast<const unsigned char*>(aegis_key.data())  // key
+                               data.size(),  // message length
+                               nullptr,      // additional data
+                               0,            // additional data length
+                               NULL,         // secret nonce, idek why libsodium has this
+                               reinterpret_cast<const unsigned char*>(aegis_nonce.data()),  // nonce
+                               reinterpret_cast<const unsigned char*>(aegis_key.data())     // key
   );
 
-  op_ciphertext = std::string(ciphertext.begin(), ciphertext.end());
-  op_nonce = std::string(nonce.begin(), nonce.end());
+  return std::string(ciphertext.begin(), ciphertext.end());
 }
 
 //------------[ Func. Implementation Separator ]------------\\ 
