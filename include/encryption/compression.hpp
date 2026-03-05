@@ -10,6 +10,7 @@
 #define COMPRESSION_HPP
 
 #include <string>
+#include <stdexcept>
 
 #include <zlib.h>
 
@@ -17,19 +18,12 @@
 
 namespace khuzdoor::encryption {
 
-// This function uses the std::string::append method
-// on `op` so ensure that the output string `op` is
-// empty when passed in
-//
 // Uses GZIP level 3
-bool gzipCompress(const std::string& str, std::string& op);
+std::string gzipCompress(const std::string& str);
 
 //================={ Header Item Separator }=================\\ 
 
-// This function uses the std::string::append method
-// on `op` so ensure that the output string `op` is
-// empty when passed in
-bool gzipDecompress(const std::string& str, std::string& op);
+std::string gzipDecompress(const std::string& str);
 
 }  // namespace khuzdoor::encryption
 

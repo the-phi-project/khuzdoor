@@ -9,6 +9,7 @@
 #include "encryption/compression.hpp"
 
 #include <string>
+#include <stdexcept>
 
 #include <zlib.h>
 
@@ -16,7 +17,7 @@ constexpr int BUF_SIZE = 16384;
 
 //---------> [ Config. Separator ] <---------\\ 
 
-bool khuzdoor::encryption::gzipCompress(const std::string& str, std::string& op) {
+std::string khuzdoor::encryption::gzipCompress(const std::string& str) {
   z_stream zstr{};
   zstr.zalloc = Z_NULL;
   zstr.zfree = Z_NULL;
@@ -25,8 +26,7 @@ bool khuzdoor::encryption::gzipCompress(const std::string& str, std::string& op)
   if (deflateInit2(&zstr, 3, Z_DEFLATED,
                    15 + 16,  // gzip
                    8, Z_DEFAULT_STRATEGY) != Z_OK) {
-    op = "";
-    return false;
+    throw std::runtime_error("ZLIB failed to run the GZIP initializer (deflateInit2)");
   }
 
   zstr.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(str.data()));
@@ -47,25 +47,22 @@ bool khuzdoor::encryption::gzipCompress(const std::string& str, std::string& op)
   deflateEnd(&zstr);
 
   if (ret != Z_STREAM_END) {
-    op = "";
-    return false;
+    throw std::runtime_error("ZLIB failed to finish the GZIP compression");
   }
 
-  op = output;
-  return true;
+  return output;
 }
 
 //------------[ Func. Implementation Separator ]------------\\ 
 
-bool khuzdoor::encryption::gzipDecompress(const std::string& str, std::string& op) {
+std::string khuzdoor::encryption::gzipDecompress(const std::string& str) {
   z_stream zstr{};
   zstr.zalloc = Z_NULL;
   zstr.zfree = Z_NULL;
   zstr.opaque = Z_NULL;
 
   if (inflateInit2(&zstr, 15 + 16) != Z_OK) {
-    op = "";
-    return false;
+    throw std::runtime_error("ZLIB failed to run the GZIP initializer (inflateInit2)");
   }
 
   zstr.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(str.data()));
@@ -86,10 +83,8 @@ bool khuzdoor::encryption::gzipDecompress(const std::string& str, std::string& o
   inflateEnd(&zstr);
 
   if (ret != Z_STREAM_END) {
-    op = "";
-    return false;
+    throw std::runtime_error("ZLIB failed to finish the GZIP decompression");
   }
 
-  op = output;
-  return true;
+  return output;
 }
