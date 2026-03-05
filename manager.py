@@ -120,10 +120,24 @@ def main():
       cleanup()
     case 6:
       filename: str = input("Filename (excluding extension): ")
-      header_path: str = input("Base path for header (e.g encryption/symmetric/): ")
+
+      header_path: str = os.path.join(input("Base path for header (e.g encryption/symmetric/): "), filename + ".hpp")
+      if os.path.exists(header_path):
+        print(f"[WARNING] The path `{header_path}` already exists.")
+        if input("Proceed with overwriting file? ") not in ["y", "Y", "yes", "YES"]:
+          print("Exiting.")
+          return
+        
+      source_path: str = os.path.join(filename + ".cpp")
+      if os.path.exists(source_path):
+        print(f"[WARNING] The path `{source_path}` already exists.")
+        if input("Proceed with overwriting file? ") not in ["y", "Y", "yes", "YES"]:
+          print("Exiting.")
+          return
+
       name: str = input("Your name: ")
       email: str = input("Your email: ")
-      templateCppFilePair(os.path.join(header_path, filename + ".hpp"), os.path.join(filename + ".cpp"), name, email)
+      templateCppFilePair(header_path, source_path, name, email)
     case 7:
       path: str = input("Path in which to install khuzdoor.1 manpage (default is your CWD)? ")
       path = os.getcwd() if path == "" else path
