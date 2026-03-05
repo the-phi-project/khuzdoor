@@ -63,13 +63,13 @@ def templateCppFilePair(header_path: str, source_path: str, author_name: str, au
 """
   
 
-  with open(header_path, "w") as header:
+  with open(os.path.join("include/", header_path), "w") as header:
     header.write(comment)
 
     include_name: str = header_path.split("/")[-1].replace(".", "_").upper()
-    header.write(f"\n#ifndef {include_name}\n#define {include_name}\n\n\n#endif /* {include_name} */")
+    header.write(f"\n#ifndef {include_name}\n#define {include_name}\n\n\n\n#endif /* {include_name} */")
 
-  with open(source_path, "w") as source:
+  with open(os.path.join("src/", source_path), "w") as source:
     source.write(comment)
     source.write(f"\n#include \"{header_path}\"\n\n")
 
@@ -119,11 +119,11 @@ def main():
     case 5:
       cleanup()
     case 6:
-      filename: str = input("Filename (including extension): ")
+      filename: str = input("Filename (excluding extension): ")
       header_path: str = input("Base path for header (e.g encryption/symmetric/): ")
       name: str = input("Your name: ")
       email: str = input("Your email: ")
-      templateCppFilePair(os.path.join("include/", header_path, filename), os.path.join("src/", filename), name, email)
+      templateCppFilePair(os.path.join(header_path, filename + ".hpp"), os.path.join(filename + ".cpp"), name, email)
     case 7:
       path: str = input("Path in which to install khuzdoor.1 manpage (default is your CWD)? ")
       path = os.getcwd() if path == "" else path
@@ -143,5 +143,7 @@ if __name__ == "__main__":
     6) Create Header/Source File Pair
     7) Install manpage
 """)
-  
-  main()
+  try:
+    main()
+  except KeyboardInterrupt:
+    pass
