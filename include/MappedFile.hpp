@@ -90,6 +90,8 @@ class MappedFile {
 
     void writeRegion(const std::string& new_data, size_t offset);
 
+    void resize(size_t new_size);
+
     //=====[ Declaration Separator ]=====\\ 
 
     // tell the kernel we plan to walk through the mapping from start to finish.

@@ -67,6 +67,20 @@ void khuzdoor::file::MappedFile::writeRegion(const std::string& new_data, size_t
   msync(this->data + offset, new_data.size(), MS_ASYNC);
 }
 
-/*::::::::::::::::::::::::::::::::::::::*\
-|*:::::::::[ Access Separator ]:::::::::*|
-\*::::::::::::::::::::::::::::::::::::::*/
+//------------[ Func. Implementation Separator ]------------\\ 
+
+void khuzdoor::file::MappedFile::resize(size_t new_size) {
+  munmap(this->data, this->size_);
+  ftruncate(this->fd, new_size); // resize the file
+
+  // request read and write access
+  int prot = PROT_READ | PROT_WRITE;
+
+  this->data = static_cast<std::byte*>(mmap(nullptr, this->size_, prot, MAP_SHARED, this->fd, 0));
+  if (this->data == MAP_FAILED) {
+    throw std::runtime_error("Failed to re-memory-map the file `" + this->path +
+                             "` after resizing to " + std::to_string(new_size) + " bytes");
+  }
+
+  this->size_ = new_size;
+}
