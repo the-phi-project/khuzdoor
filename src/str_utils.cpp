@@ -20,14 +20,11 @@ std::vector<std::string> khuzdoor::utils::splitStringRandomly(const std::string&
 
   size_t last_index = 0;
   while (last_index < str.size()) {
-    size_t next_index = randombytes_uniform(str.size());
-    if (next_index < last_index) next_index += last_index;
+    size_t chunk_size = randombytes_uniform(100) + 1;
 
-    std::string sub = str.substr(last_index, next_index);
+    output.push_back(str.substr(last_index, chunk_size));  // ITS A LENGTH NOT AN INDEX!
 
-    output.push_back(sub);
-
-    last_index = next_index;
+    last_index += chunk_size;
   }
 
   return output;
