@@ -6,12 +6,18 @@ khuzdoor - Hide encrypted data inside a large block of "random" data (https://ww
 
 .SH DESCRIPTION
 khuzoor is a powerful and efficient tool for encrypting text and files, then hiding the data
-noncontiguously inside of larger files (e.g. audiovisual, binary, etc.) which effectively hides
+noncontiguously inside of larger files (e.g. image, video, etc.) which effectively hides
 the data in plain sight such that an attacker has 
 .I no idea it even contains data
 because thats the best form of encryption. Of course the program
 .I also
 encrypts the data using a password-derived AEGIS-256 key so that the data is still protected.
+
+.SH WARNING
+It is bad practice to try and operate in this way on a binary executable because, while it is a
+source of large and "random" data, the executable will no longer execute and it would be quite
+obvious that it was tampered with. Try to use things that can be rendered even if extra data
+was shoved into it, like a PNG file.
 
 .SH SEE ALSO
 .B "All projects below are located at"
