@@ -84,8 +84,8 @@ class MappedFile {
 
     //=====[ Declaration Separator ]=====\\ 
 
-    std::string readRegion(size_t offset, size_t len) const {
-      return {reinterpret_cast<const char*>(this->data + offset), len};
+    std::span<std::byte> readRegion(size_t offset, size_t len) const {
+      return {this->data + offset, len};
     }
 
     void writeRegion(const std::string& new_data, size_t offset);
