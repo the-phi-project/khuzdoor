@@ -47,7 +47,7 @@ khuzdoor::file::MappedFile::MappedFile(const std::string& path_) : path(path_) {
   // let the OS map the entire file into virtual mem space, nullptr = it can decide where
   this->data = static_cast<std::byte*>(mmap(nullptr, this->size_, prot, MAP_SHARED, this->fd, 0));
   if (this->data == MAP_FAILED) {
-    throw std::runtime_error("Failed to memory-map the file `" + this->path + "`");
+    throw std::runtime_error("Failed to memory-map file `" + this->path + "`");
   }
 }
 
@@ -71,7 +71,7 @@ void khuzdoor::file::MappedFile::writeRegion(const std::string& new_data, size_t
 
 void khuzdoor::file::MappedFile::resize(size_t new_size) {
   munmap(this->data, this->size_);
-  ftruncate(this->fd, new_size); // resize the file
+  ftruncate(this->fd, new_size);  // resize the file
 
   // request read and write access
   int prot = PROT_READ | PROT_WRITE;
