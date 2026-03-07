@@ -32,7 +32,6 @@ find_package(ZLIB REQUIRED)
 
 include(FetchContent)
 
-
 FetchContent_Declare(sodium
     GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
     GIT_BRANCH     master
@@ -44,12 +43,12 @@ FetchContent_Declare(json
 )
 
 FetchContent_Declare(termcolor
-    GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake
+    GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake.git
     GIT_BRANCH     master
 )
 
 FetchContent_Declare(cxxopts
-    GIT_REPOSITORY https://github.com/jarro2783/cxxopts
+    GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
     GIT_TAG        v3.3.1
 )
 
