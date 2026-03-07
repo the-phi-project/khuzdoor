@@ -54,9 +54,10 @@ class MappedFile {
     std::byte* data = nullptr;
     size_t size_ = 0;
 
-    std::string path;
 
   public:
+    std::string path;
+
     explicit MappedFile(const std::string& path);
     // no copying, unique resource
     MappedFile(const MappedFile&) = delete;
@@ -76,6 +77,10 @@ class MappedFile {
 
     std::span<std::byte> view() {
       return {this->data, this->size_};
+    }
+
+    std::byte* byteAt(size_t idx) {
+      return this->data + idx;
     }
 
     size_t size() const {
