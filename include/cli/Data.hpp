@@ -21,7 +21,7 @@
 namespace khuzdoor::cli {
 
 struct Data {
-    khuzdoor::file::MappedFile file;
+    khuzdoor::file::MappedFile& file;
     std::string aegis_key;
     std::string aegis_nonce;
 };
