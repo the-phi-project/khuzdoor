@@ -1,7 +1,7 @@
 # CONFIG
 cmake_minimum_required(VERSION 3.24...4.1.2)
 project(KHUZDOOR
-    VERSION 0.0.1
+    VERSION 0.0.3
     LANGUAGES C CXX
 )
 
@@ -33,35 +33,62 @@ find_package(ZLIB REQUIRED)
 include(FetchContent)
 
 FetchContent_Declare(sodium
-    GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
-    GIT_BRANCH     master
+GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+GIT_BRANCH     master
 )
 set(SODIUM_DISABLE_TESTS ON CACHE BOOL "Disable tests")
 
 FetchContent_Declare(json
-    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
 )
 
 FetchContent_Declare(termcolor
-    GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake.git
-    GIT_BRANCH     master
+GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake.git
+GIT_BRANCH     master
 )
 
 FetchContent_Declare(cxxopts
-    GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
-    GIT_TAG        v3.3.1
+GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+GIT_TAG        v3.3.1
 )
 
 FetchContent_MakeAvailable(sodium json termcolor cxxopts)
+
+##
+
+include(ExternalProject)
+
+ExternalProject_Add(
+    libmagic_ep
+    GIT_REPOSITORY https://github.com/file/file.git
+    GIT_TAG master
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --disable-shared --enable-static --prefix=<INSTALL_DIR>
+    BUILD_IN_SOURCE 1
+    UPDATE_COMMAND ""
+    BUILD_COMMAND make
+    INSTALL_COMMAND make install
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+    PATCH_COMMAND autoreconf -fiv
+)
+
+ExternalProject_Get_Property(libmagic_ep INSTALL_DIR)
+
+set(LIBMAGIC_INCLUDE_DIR ${INSTALL_DIR}/include)
+set(LIBMAGIC_LIBRARY ${INSTALL_DIR}/lib/libmagic.a)
 #
 
 # EXECUTABLE
 add_executable(khuzdoor ${KHUZDOOR_SRC})
 
+add_dependencies(khuzdoor libmagic_ep)
+
 target_include_directories(khuzdoor
     BEFORE PRIVATE
         ${ZLIB_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${LIBMAGIC_INCLUDE_DIR}
 )
 
 target_link_libraries(khuzdoor
@@ -71,6 +98,9 @@ target_link_libraries(khuzdoor
         nlohmann_json::nlohmann_json
         termcolor
         cxxopts
+        ${LIBMAGIC_LIBRARY}
+        bz2
+        lzma
 )
 
 target_compile_options(khuzdoor
@@ -87,6 +117,7 @@ target_compile_options(khuzdoor
 
 add_compile_definitions(
     KHUZDOOR_VERSION="${CMAKE_PROJECT_VERSION}"
+    HAVE_LIBMAGIC
 )
 #
 
