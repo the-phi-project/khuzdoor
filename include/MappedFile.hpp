@@ -31,13 +31,6 @@ namespace fs = std::filesystem;
 
 namespace khuzdoor::file {
 
-inline size_t getFileSize(const std::string& filepath) {
-  if (!fs::exists(filepath)) return 0;
-  return fs::file_size(filepath);
-}
-
-//================={ Header Item Separator }=================\\ 
-
 // The purpose of this class is such that if the user chooses to
 // encode data into a very large file (>2GB), which is sort of
 // the actual primary usecase of the program, we can efficiently
