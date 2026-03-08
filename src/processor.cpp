@@ -17,6 +17,7 @@
 #include <nlohmann/json.hpp>
 #include <termcolor/termcolor.hpp>
 #include <cxxopts.hpp>
+#include <magic.h>
 
 #include "MappedFile.hpp"
 #include "encryption/compression.hpp"
@@ -25,6 +26,7 @@
 #include "cli/Data.hpp"
 #include "utils/str_utils.hpp"
 #include "utils/base64.hpp"
+#include "utils/file_utils.hpp"
 
 constexpr int SUCCESS = 0;
 constexpr int USAGE_ERROR = 1;
@@ -152,7 +154,30 @@ std::string khuzdoor::cli::readDataFromFile(khuzdoor::cli::Data& data, const jso
 
 //------------[ Func. Implementation Separator ]------------\\ 
 
-std::vector<int> khuzdoor::cli::createIndicesForSplit(const std::vector<std::string>& split,
-                                                      khuzdoor::cli::Data& data) {
+int khuzdoor::cli::createIndicesForSplit(const std::vector<std::string>& split,
+                                         khuzdoor::cli::Data& data, std::vector<int>& op) {
   data.file.advise_sequential();  // go through file sequentially to figure out where to put things
+
+  // MAGIC
+  magic_t detector = magic_open(MAGIC_MIME_TYPE);  // return MIME string instead of description
+  // MAGIC_DB_PATH is "~/.magic/magic.mgc" for developers by default
+  if (magic_load(detector, khuzdoor::utils::expandFilePath(MAGIC_DB_PATH).data()) != 0) {
+    std::cout << tmc::red << "Error loading libmagic database: " << magic_error(detector) << "\n"
+              << tmc::reset;
+    magic_close(detector);
+    return FILE_ERROR;
+  }
+
+  const char* given = magic_file(detector, data.file.path.data());
+  if (given == NULL) {
+    std::cout << tmc::red << "Error opening and reading magic number from file `" << data.file.path
+              << "`: " << magic_error(detector) << "\n"
+              << tmc::reset;
+    magic_close(detector);
+    return FILE_ERROR;
+  }
+
+  const std::string mime = given;
+  magic_close(detector);  // memory safety guys!
+  //
 }

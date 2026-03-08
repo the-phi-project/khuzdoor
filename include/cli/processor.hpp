@@ -18,6 +18,7 @@
 #include <nlohmann/json.hpp>
 #include <termcolor/termcolor.hpp>
 #include <cxxopts.hpp>
+#include <magic.h>
 
 #include "MappedFile.hpp"
 #include "encryption/compression.hpp"
@@ -26,6 +27,7 @@
 #include "cli/Data.hpp"
 #include "utils/str_utils.hpp"
 #include "utils/base64.hpp"
+#include "utils/file_utils.hpp"
 
 using json = nlohmann::json;
 namespace tmc = termcolor;
@@ -46,6 +48,9 @@ int extractJSONFromFile(khuzdoor::cli::Data& data, json& op);
 // this function just sort of assumes that the JSON
 // will be in the form of {index, length} because its
 // been AEGIS encrypted so it can't really be tampered with
+//
+// it also assumes that it wont fail because even if it reads
+// bullshit bytes its still just reading bytes
 std::string readDataFromFile(khuzdoor::cli::Data& data, const json& j);
 
 //================={ Header Item Separator }=================\\ 
@@ -56,8 +61,8 @@ inline std::vector<std::string> createSplit(const std::string& message) {
 
 //================={ Header Item Separator }=================\\ 
 
-std::vector<int> createIndicesForSplit(const std::vector<std::string>& split,
-                                       khuzdoor::cli::Data& data);
+int createIndicesForSplit(const std::vector<std::string>& split, khuzdoor::cli::Data& data,
+                          std::vector<int>& op);
 
 }  // namespace khuzdoor::cli
 
