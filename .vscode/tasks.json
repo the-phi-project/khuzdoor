@@ -4,7 +4,7 @@
     {
       "label": "Build (Release)",
       "type": "shell",
-      "command": "cmake -S . -B _build -DCMAKE_BUILD_TYPE=Release && cmake --build _build -j4 && mv _build/khuzdoor ./",
+      "command": "cmake -S . -B _build -DCMAKE_BUILD_TYPE=Release -DMAGIC_DB_PATH=\"~/.magic/magic.mgc\" && cmake --build _build -j4 && mv _build/khuzdoor ./",
       "args": [],
       "group": {
         "kind": "build",
@@ -17,7 +17,7 @@
     {
       "label": "Build (Debug)",
       "type": "shell",
-      "command": "cmake -S . -B _build -DCMAKE_BUILD_TYPE=Debug && cmake --build _build -j4 && mv _build/khuzdoor ./ && dsymutil ./khuzdoor",
+      "command": "cmake -S . -B _build -DCMAKE_BUILD_TYPE=Debug -DMAGIC_DB_PATH=\"~/.magic/magic.mgc\" && cmake --build _build -j4 && mv _build/khuzdoor ./ && dsymutil ./khuzdoor",
       "args": [],
       "group": {
         "kind": "build",

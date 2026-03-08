@@ -118,6 +118,7 @@ target_compile_options(khuzdoor
 add_compile_definitions(
     KHUZDOOR_VERSION="${CMAKE_PROJECT_VERSION}"
     HAVE_LIBMAGIC
+    MAGIC_DB_PATH="${MAGIC_DB_PATH}"
 )
 #
 

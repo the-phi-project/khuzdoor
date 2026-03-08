@@ -13,8 +13,8 @@ import subprocess
 #---------> [ Config. Separator ] <---------#
 
 def build(debug: bool = False):
-  print("cmake -S . -B _build -DCMAKE_BUILD_TYPE=" + ("Debug" if debug else "Release"))
-  print(subprocess.check_output("cmake -S . -B _build -DCMAKE_BUILD_TYPE=" + ("Debug" if debug else "Release"), shell=True).decode())
+  print("cmake -S . -B _build -DCMAKE_BUILD_TYPE=" + ("Debug" if debug else "Release") + "-DMAGIC_DB_PATH=\"~/.magic/magic.mgc\"")
+  print(subprocess.check_output("cmake -S . -B _build -DCMAKE_BUILD_TYPE=" + ("Debug" if debug else "Release") + "-DMAGIC_DB_PATH=\"~/.magic/magic.mgc\"", shell=True).decode())
 
   print("cmake --build _build")
   print(subprocess.check_output("cmake --build _build", shell=True).decode())
