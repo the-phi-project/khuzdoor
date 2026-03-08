@@ -61,7 +61,7 @@ include(ExternalProject)
 ExternalProject_Add(
     libmagic_ep
     GIT_REPOSITORY https://github.com/file/file.git
-    GIT_TAG master
+    GIT_TAG FILE5_47
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --disable-shared --enable-static --prefix=<INSTALL_DIR>
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
