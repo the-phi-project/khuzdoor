@@ -14,6 +14,7 @@
 #include <vector>
 #include <span>
 #include <stdexcept>
+#include <optional>
 
 #include <nlohmann/json.hpp>
 #include <termcolor/termcolor.hpp>
@@ -63,6 +64,16 @@ inline std::vector<std::string> createSplit(const std::string& message) {
 
 int createIndicesForSplit(const std::vector<std::string>& split, khuzdoor::cli::Data& data,
                           std::vector<int>& op);
+
+//================={ Header Item Separator }=================\\ 
+// <util definitions; funcs in src/processor_utils.cpp>
+//================={ Header Item Separator }=================\\ 
+
+std::optional<size_t> findIDATBlob(size_t start_idx, khuzdoor::cli::Data& data);
+
+//================={ Header Item Separator }=================\\
+
+std::optional<size_t> findSOSBlob(size_t start_idx, khuzdoor::cli::Data& data);
 
 }  // namespace khuzdoor::cli
 
