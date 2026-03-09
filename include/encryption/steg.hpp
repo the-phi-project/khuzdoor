@@ -16,6 +16,8 @@
 #include <bitset>
 #include <cstdint>
 
+#include <limits.h>
+
 #include <magic.h>
 
 #include "cli/Data.hpp"
@@ -26,7 +28,7 @@
 namespace khuzdoor::encryption {
 
 // convert a std::byte into a std::bitset
-inline std::bitset<8> toBits(std::byte byte) {
+inline std::bitset<8> toBits(char byte) {
   std::bitset<8> set{};
 
   // https://stackoverflow.com/a/37417501
@@ -38,6 +40,8 @@ inline std::bitset<8> toBits(std::byte byte) {
 }
 
 //================={ Header Item Separator }=================\\ 
+
+
 
 }  // namespace khuzdoor::encryption
 
