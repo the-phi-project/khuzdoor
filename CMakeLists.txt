@@ -30,26 +30,30 @@ file(GLOB_RECURSE KHUZDOOR_SRC CONFIGURE_DEPENDS ${KHUZDOOR_SRC_DIR}/*.cpp ${KHU
 # EXTERNAL LIBRARIES
 find_package(ZLIB REQUIRED)
 
+find_package(ImageMagick COMPONENTS Magick++)
+
+##
+
 include(FetchContent)
 
 FetchContent_Declare(sodium
-GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
-GIT_BRANCH     master
+    GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+    GIT_BRANCH     master
 )
 set(SODIUM_DISABLE_TESTS ON CACHE BOOL "Disable tests")
 
 FetchContent_Declare(json
-URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
 )
 
 FetchContent_Declare(termcolor
-GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake.git
-GIT_BRANCH     master
+    GIT_REPOSITORY https://github.com/TrynaThinkOf1/termcolor-cmake.git
+    GIT_BRANCH     master
 )
 
 FetchContent_Declare(cxxopts
-GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
-GIT_TAG        v3.3.1
+    GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+    GIT_TAG        v3.3.1
 )
 
 FetchContent_MakeAvailable(sodium json termcolor cxxopts)
@@ -89,6 +93,7 @@ target_include_directories(khuzdoor
         ${ZLIB_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${LIBMAGIC_INCLUDE_DIR}
+        ${ImageMagick_INCLUDE_DIRS}
 )
 
 target_link_libraries(khuzdoor
@@ -99,6 +104,7 @@ target_link_libraries(khuzdoor
         termcolor
         cxxopts
         ${LIBMAGIC_LIBRARY}
+        ${ImageMagick_LIBRARIES}
         bz2
         lzma
 )
@@ -120,6 +126,8 @@ add_compile_definitions(
     HAVE_LIBMAGIC
     MAGIC_DB_PATH="${MAGIC_DB_PATH}"
 )
+add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
+add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
 #
 
 # POST-CREATE
