@@ -30,8 +30,6 @@ file(GLOB_RECURSE KHUZDOOR_SRC CONFIGURE_DEPENDS ${KHUZDOOR_SRC_DIR}/*.cpp ${KHU
 # EXTERNAL LIBRARIES
 find_package(ZLIB REQUIRED)
 
-find_package(ImageMagick COMPONENTS Magick++)
-
 ##
 
 include(FetchContent)
@@ -81,6 +79,59 @@ ExternalProject_Get_Property(libmagic_ep INSTALL_DIR)
 
 set(LIBMAGIC_INCLUDE_DIR ${INSTALL_DIR}/include)
 set(LIBMAGIC_LIBRARY ${INSTALL_DIR}/lib/libmagic.a)
+
+##
+
+set(STB_IMAGE_PATH "${CMAKE_CURRENT_BINARY_DIR}/stb_image.h")
+
+if(NOT EXISTS "${STB_IMAGE_PATH}")
+    file(DOWNLOAD
+        "https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image.h"
+        "${STB_IMAGE_PATH}"
+        STATUS download_status
+        LOG download_log
+    )
+
+    # check download success
+    list(GET download_status 0 status_code)
+    if(status_code EQUAL 0)
+        message(STATUS "Successfully downloaded stb_image.h")
+    else()
+        message(FATAL_ERROR "Failed to download stb_image.h: ${download_log}")
+    endif()
+endif()
+
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
+
+##
+
+set(STB_IMAGE_WRITE_PATH "${CMAKE_CURRENT_BINARY_DIR}/stb_image_write.h")
+
+if(NOT EXISTS "${STB_IMAGE_WRITE_PATH}")
+    file(DOWNLOAD
+        "https://raw.githubusercontent.com/nothings/stb/refs/heads/master/stb_image_write.h"
+        "${STB_IMAGE_WRITE_PATH}"
+        STATUS download_status
+        LOG download_log
+    )
+
+    # check download success
+    list(GET download_status 0 status_code)
+    if(status_code EQUAL 0)
+        message(STATUS "Successfully downloaded stb_image_write.h")
+    else()
+        message(FATAL_ERROR "Failed to download stb_image_write.h: ${download_log}")
+    endif()
+endif()
+
+add_library(stb_image_write INTERFACE)
+target_include_directories(stb_image_write INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
+
 #
 
 # EXECUTABLE
@@ -93,7 +144,6 @@ target_include_directories(khuzdoor
         ${ZLIB_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${LIBMAGIC_INCLUDE_DIR}
-        ${ImageMagick_INCLUDE_DIRS}
 )
 
 target_link_libraries(khuzdoor
@@ -104,9 +154,10 @@ target_link_libraries(khuzdoor
         termcolor
         cxxopts
         ${LIBMAGIC_LIBRARY}
-        ${ImageMagick_LIBRARIES}
         bz2
         lzma
+        stb_image
+        stb_image_write
 )
 
 target_compile_options(khuzdoor
