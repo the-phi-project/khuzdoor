@@ -16,32 +16,25 @@
 #include <bitset>
 #include <cstdint>
 
-#include <limits.h>
-
 #include <magic.h>
-
-#include "cli/Data.hpp"
-#include "MappedFile.hpp"
 
 //---------> [ Config. Separator ] <---------\\ 
 
 namespace khuzdoor::encryption {
 
-// convert a std::byte into a std::bitset
-inline std::bitset<8> toBits(char byte) {
-  std::bitset<8> set{};
-
-  // https://stackoverflow.com/a/37417501
-  for (int bit = 0; bit < 8; bit++) {
-    set[bit] = (((uint8_t)byte >> bit) & 1) != 0;
-  }
-
-  return set;
-}
+// write the length of the content to the image pixel buffer
+// length: the length (of the data) to write
+// pixels: image pixel buffer pointer
+// channels: number of channels, important for determining stride
+void writeLengthBytes(uint32_t length, uint8_t* pixels, int channels);
 
 //================={ Header Item Separator }=================\\ 
 
-
+// read the first four bytes of the image pixel buffer to
+// get the length
+// pixels: image pixel buffer pointer
+// channels: number of channels, important for determining stride
+uint32_t readLengthBytes(uint8_t* pixels, int channels);
 
 }  // namespace khuzdoor::encryption
 
