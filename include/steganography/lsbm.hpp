@@ -23,7 +23,7 @@
 namespace khuzdoor::steganography {
 
 /// writes a secret bit to a pixel's LSB from a pixel array
-/// via the stbi_load() method. LSBM is when if the pixel's LSB
+/// via the `stbi_load()` method. LSBM is when if the pixel's LSB
 /// does not already match the bit to write, it randomly adds or
 /// subtracts 1 (to make pixel match) such that it makes the changed
 /// data look more random
@@ -34,7 +34,7 @@ void writeLSBM(uint8_t* pixel, bool bit);
 //================={ Header Item Separator }=================\\ 
 
 /// reads the secret bit from a pixel's LSB from a pixel array
-/// via the stbi_load() method
+/// via the `stbi_load()` method
 /// @param pixel pointer to a pixel in the pixel array
 /// @returns whether the bit is 1 or 0
 bool readLSBM(const uint8_t* pixel);
