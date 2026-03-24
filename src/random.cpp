@@ -18,17 +18,32 @@
 
 //---------> [ Config. Separator ] <---------\\ 
 
-std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t data_size, uint32_t limit,
+std::array<unsigned char, randombytes_SEEDBYTES> khuzdoor::encryption::generateSeed(
+  const std::string& data) {
+  //
+  std::array<unsigned char, randombytes_SEEDBYTES> arr{};
+  crypto_generichash(arr.data(),                                           // out
+                     arr.size(),                                           // out length
+                     reinterpret_cast<const unsigned char*>(data.data()),  // in
+                     data.size(),                                          // in length
+                     nullptr,                                              // key
+                     0                                                     // key length
+  );
+
+  return arr;
+}
+
+//------------[ Func. Implementation Separator ]------------\\ 
+
+std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t minimum,
+                                                                uint32_t data_size, uint32_t limit,
                                                                 const std::string& password) {
   uint32_t num_indices = data_size * 8;  // 8 bits for every byte
   if (num_indices > limit) return {};    // Need enough space for non-colliding indices
 
   // derive seed from password
-  std::array<unsigned char, randombytes_SEEDBYTES> seed{};
-  std::copy(password.begin(),
-            password.begin() + (password.size() < seed.size() ? password.size() : seed.size()),
-            seed.begin());
-
+  std::array<unsigned char, randombytes_SEEDBYTES> seed =
+    khuzdoor::encryption::generateSeed(password);
   // create array that contains all possible indices
   std::vector<uint32_t> pool(limit);
   for (uint32_t i = 0; i < limit; i++) {
@@ -46,7 +61,12 @@ std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t data_si
     std::memcpy(&random_val, random_buf.data() + buf_offset, sizeof(uint32_t));
     buf_offset += sizeof(uint32_t);
 
-    uint32_t j = i + (random_val % (limit - i));  // dont ask gng
+    // this has modulo bias but is fine because im not doing anything
+    // cryptographically with these indices, and the bias is negligible
+    // with large limits, which are common for images as the limit scales
+    // best case x^2 with the image size -- also any other type of thing
+    // like `randombytes_uniform()` isnt deterministic which defeats the point
+    uint32_t j = i + (random_val % (limit - (i + minimum)));
 
     std::swap(pool[i], pool[j]);
   }
