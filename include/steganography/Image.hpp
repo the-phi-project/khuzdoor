@@ -12,9 +12,7 @@
 #include <string>
 #include <vector>
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 #include "encryption/random.hpp"
@@ -41,11 +39,7 @@ class Image {
     /// as load all of the file's attributes
     /// @param path_ the path of the file to open and read *ASSUMED TO BE A VERIFIED IMAGE FILE*
     /// @param success the output parameter for whether the load was successful or not
-    explicit Image(const std::string& path_, bool& success);
-
-    /// Another constructor, just for preallocating the
-    /// object without a specific file
-    Image() : data(NULL) {};
+    explicit Image(const std::string& path_);
 
     // no copying, unique resource
     Image(const Image&) = delete;
@@ -57,6 +51,10 @@ class Image {
     //=====[ Declaration Separator ]=====\\ 
 
     // clang-format off
+
+    bool loaded() const { return this->data != NULL; }
+
+    /**/
 
     int getWidth() const { return this->width; }
     int getHeight() const { return this->height; }
