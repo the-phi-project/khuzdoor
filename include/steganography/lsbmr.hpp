@@ -20,7 +20,7 @@
 
 //---------> [ Config. Separator ] <---------\\ 
 
-namespace khuzdoor::steganography {
+namespace khuzdoor::steg {
 
 /// writes a secret bit to a pixel's LSB from a pixel array
 /// via the `stbi_load()` method. LSBM is when if the pixel's LSB
@@ -29,7 +29,7 @@ namespace khuzdoor::steganography {
 /// data look more random
 /// @param pixel pointer to a pixel in the pixel array
 /// @param bit whether the bit should be set to 1 or 0
-void writeLSBM(uint8_t* pixel, bool bit);
+void writeLSBMR(uint8_t* pixel, bool bit);
 
 //================={ Header Item Separator }=================\\ 
 
@@ -37,8 +37,8 @@ void writeLSBM(uint8_t* pixel, bool bit);
 /// via the `stbi_load()` method
 /// @param pixel pointer to a pixel in the pixel array
 /// @returns whether the bit is 1 or 0
-bool readLSBM(const uint8_t* pixel);
+bool readLSBMR(const uint8_t* pixel);
 
-}  // namespace khuzdoor::steganography
+}  // namespace khuzdoor::steg
 
 #endif /* LSBM_HPP */

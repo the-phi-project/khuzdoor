@@ -6,7 +6,7 @@
 // Original author: Zevi Berlin (zeviberlin@gmail.com)
 // Latest editor: Zevi Berlin (zeviberlin@gmail.com)
 
-#include "steganography/lsbm.hpp"
+#include "steganography/lsbmr.hpp"
 
 #include <cstddef>
 #include <string>
@@ -20,21 +20,21 @@
 
 //---------> [ Config. Separator ] <---------\\ 
 
-void khuzdoor::steganography::writeLSBM(uint8_t* pixel, bool bit) {
+void khuzdoor::steg::writeLSBMR(uint8_t* pixel, bool bit) {
   if ((*pixel & 1U) == (uint8_t)bit) {  // pixel's LSB already is bit
     return;                             // no change necessary
   }
 
   // basically just a pseudo-random way to determine +/-
   if (randombytes_random() % 2 == 0) {
-    *pixel = (*pixel == 255) ? 254 : *pixel - 1;  // avoid overflow
+    *pixel = (*pixel == 255) ? 254 : (*pixel) - 1;  // avoid overflow
   } else {
-    *pixel = (*pixel == 0) ? 1 : *pixel + 1;  // avoid underflow
+    *pixel = (*pixel == 0) ? 1 : (*pixel) + 1;  // avoid underflow
   }
 }
 
 //------------[ Func. Implementation Separator ]------------\\ 
 
-bool khuzdoor::steganography::readLSBM(const uint8_t* pixel) {
+bool khuzdoor::steg::readLSBMR(const uint8_t* pixel) {
   return (*pixel & 1U) != 0;
 }
