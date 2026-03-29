@@ -102,7 +102,8 @@ if(NOT EXISTS "${STB_IMAGE_PATH}")
 endif()
 
 add_library(stb_image INTERFACE)
-target_include_directories(stb_image INTERFACE
+# mark as `SYSTEM` to suppress warnings
+target_include_directories(stb_image SYSTEM INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
 
@@ -128,7 +129,8 @@ if(NOT EXISTS "${STB_IMAGE_WRITE_PATH}")
 endif()
 
 add_library(stb_image_write INTERFACE)
-target_include_directories(stb_image_write INTERFACE
+# mark as `SYSTEM` to suppress warnings
+target_include_directories(stb_image_write SYSTEM INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
 
