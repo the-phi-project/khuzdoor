@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -62,13 +63,23 @@ class Image {
 
     // clang-format on
 
+    /// Accesses pixel data at the specified index with bounds checking.
+    /// @param idx The linear index into the flattened pixel data array.
+    /// @return Pointer to the data at the specified index, or nullptr if out of bounds.
+    /// @note Time complexity: O(1). The bounds check is a single comparison operation,
+    ///       which is negligible compared to the actual memory access. It's worth the cost
+    ///       as it prevents buffer overflows and undefined behavior
+    uint8_t* at(uint32_t idx) const {
+      return (idx > (this->width * this->height * this->channels)) ? nullptr : this->data + idx;
+    }
+
     /// Take the (edited?) image and save the data
     /// to a new file path - the format of the image
     /// comes from the extension, so `.png` -> `PNG Image`
-    /// therefore its assumed that the output path has
-    /// a verified safe format
     /// @param new_path the path to which the image data should be saved
     /// @returns the success of the saving
+    /// @note this function assumes that the inputted path
+    ///       has an extension which is a valid image extension
     bool save(const std::string& new_path);
 };
 
