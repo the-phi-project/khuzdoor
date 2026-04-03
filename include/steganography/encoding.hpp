@@ -27,7 +27,7 @@ namespace khuzdoor::steg {
 /// them, less resistant to RS and Chi^2 than others
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
-void writeRandomLSBMR(const Image& img, const std::string& data);
+void encodeRandomLSBMR(const Image& img, const std::string& data, const std::string& password);
 
 //================={ Header Item Separator }=================\\ 
 
@@ -44,7 +44,7 @@ bool edgeEncodable(const Image& img, uint32_t length);
 /// suspicious from a mathematical perspective
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
-void writeEdgeLSBMR(const Image& img, const std::string& data);
+void encodeEdgeLSBMR(const Image& img, const std::string& data);
 
 //================={ Header Item Separator }=================\\ 
 
@@ -61,7 +61,7 @@ bool textureEncodable(const Image& img, uint32_t length);
 /// suspicious from a mathematical perspective
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
-void writeTextureLSBMR(const Image& img, const std::string& data);
+void encodeTextureLSBMR(const Image& img, const std::string& data);
 
 }  // namespace khuzdoor::steg
 
