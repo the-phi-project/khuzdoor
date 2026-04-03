@@ -63,9 +63,10 @@ class Image {
 
     // clang-format on
 
-    /// Accesses pixel data at the specified index with bounds checking.
+    /// Accesses pixel data at the specified index with bounds checking
     /// @param idx The linear index into the flattened pixel data array.
     /// @return Pointer to the data at the specified index, or nullptr if out of bounds.
+    /// @note This assumes the caller has dealt with channel offset
     /// @note Time complexity: O(1). The bounds check is a single comparison operation,
     ///       which is negligible compared to the actual memory access. It's worth the cost
     ///       as it prevents buffer overflows and undefined behavior
