@@ -88,8 +88,6 @@ class Image {
 
 //================={ Header Item Separator }=================\\ 
 
-// NOLINTBEGIN -- I fucking get it you don't like C
-
 /// Wrapper struct for just raw data, rather than
 /// have an entire class with helper funcs
 struct ImageData {
@@ -101,14 +99,12 @@ struct ImageData {
     //=====[ Declaration Separator ]=====\\ 
 
     ImageData(int width_, int height_, int channels_)
-        : width(width_),
+        : data(std::vector<uint8_t>((size_t)width_ * height_ * channels_)),
+          width(width_),
           height(height_),
-          channels(channels_),
-          data(std::vector<uint8_t>(width_ * height_ * channels_)) {
+          channels(channels_) {
     }
 };
-
-// NOLINTEND
 
 }  // namespace khuzdoor::steg
 
