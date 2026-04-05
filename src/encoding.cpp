@@ -12,8 +12,9 @@
 #include <vector>
 #include <cstdint>
 
-#include "steganography/Image.hpp"
+#include "Image.hpp"
 #include "steganography/lsbmr.hpp"
+#include "steganography/sobel.hpp"
 #include "encryption/random.hpp"
 
 //---------> [ Config. Separator ] <---------\\ 
@@ -50,4 +51,39 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
     else { bit++; }
     // clang-format on
   }
+}
+
+//------------[ Func. Implementation Separator ]------------\\ 
+
+#define EXP3(name) name[0], name[1], name[2]  // EXPAND 3 ITEM ARRAYS
+
+// TODO: handle channels
+std::vector<uint32_t> khuzdoor::steg::edgeEncodable(const khuzdoor::steg::ImageData& grayscale,
+                                                    uint32_t length) {
+  std::vector<uint32_t> edges{};
+
+  // grayscale image has only 1 channel
+  for (uint32_t i = 1; i < (grayscale.width * grayscale.height) - 1; i++) {
+    uint8_t row1[]{grayscale.data[i - 1], grayscale.data[i], grayscale.data[i + 1]};
+
+    // `* grayscale.width` because thats the stride and accesses the next row
+    uint8_t row2[]{grayscale.data[(i - 1) + (grayscale.width)],
+                   grayscale.data[i + (grayscale.width)],
+                   grayscale.data[(i + 1) + (grayscale.width)]};
+
+    uint8_t row3[]{grayscale.data[(i - 1) + (grayscale.width * 2)],
+                   grayscale.data[i + (grayscale.width * 2)],
+                   grayscale.data[(i + 1) + (grayscale.width * 2)]};
+
+    uint8_t rows[][3]{{EXP3(row1)}, {EXP3(row2)}, {EXP3(row3)}};
+    uint16_t sobels = khuzdoor::steg::calculateSobels(rows);
+
+    if (sobels >= EDGE_THRESHOLD) {
+      edges.push_back(i - 1);
+      edges.push_back(i);
+      edges.push_back(i + 1);
+    }
+  }
+
+  return (edges.size() >= (size_t)length * 8) ? edges : std::vector<uint32_t>{};
 }

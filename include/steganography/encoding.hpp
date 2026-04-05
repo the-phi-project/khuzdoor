@@ -13,8 +13,9 @@
 #include <vector>
 #include <cstdint>
 
-#include "steganography/Image.hpp"
+#include "Image.hpp"
 #include "steganography/lsbmr.hpp"
+#include "steganography/sobel.hpp"
 #include "encryption/random.hpp"
 
 //---------> [ Config. Separator ] <---------\\ 
@@ -22,21 +23,25 @@
 namespace khuzdoor::steg {
 
 /// Instead of a "smart" encoding mechanism, generate
-/// random indices throughout the image data, pixels
-/// at those indices will have secret bits encoded into
+/// deterministically random indices throughout the image
+/// data, pixels at those indices will have secret bits encoded into
 /// them, less resistant to RS and Chi^2 than others
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
+/// @param password the password, in order to regenerate indices
 void encodeRandomLSBMR(const Image& img, const std::string& data, const std::string& password);
 
 //================={ Header Item Separator }=================\\ 
 
 /// Check whether or not an image has enough edge pixels
-/// such that all of the secret bits can be encoded
+/// such that all of the secret BITS can be encoded
 /// @param img image wrapper class which contains host image data
-/// @param length length of the data which needs to be encoded
-/// @returns whether there is enough space
-bool edgeEncodable(const Image& img, uint32_t length);
+/// @param length length IN BYTES of the data which needs to be encoded
+/// @returns an empty vector if there isnt enough space
+/// @returns a vector of indices of edge pixels that can be used
+/// @note this function should also be used for checking
+///       the encoding, for the purposes of decoding
+std::vector<uint32_t> edgeEncodable(const ImageData& grayscale, uint32_t length);
 
 /// Encode secret bits into edge pixels of an image, this
 /// is quite resistant to statistical steganalysis because
@@ -53,7 +58,9 @@ void encodeEdgeLSBMR(const Image& img, const std::string& data);
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
 /// @returns whether there is enough space
-bool textureEncodable(const Image& img, uint32_t length);
+/// @note this function should also be used for checking
+///       the encoding, for the purposes of decoding
+bool textureEncodable(const ImageData& grayscale, uint32_t length);
 
 /// Encode secret bits into texture pixels of an image, this
 /// is quite resistant to statistical steganalysis because
