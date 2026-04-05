@@ -93,7 +93,7 @@ class Image {
 /// Wrapper struct for just raw data, rather than
 /// have an entire class with helper funcs
 struct ImageData {
-    uint8_t* data;
+    std::vector<uint8_t> data;
     int width;
     int height;
     int channels;
@@ -101,12 +101,10 @@ struct ImageData {
     //=====[ Declaration Separator ]=====\\ 
 
     ImageData(int width_, int height_, int channels_)
-        : width(width_), height(height_), channels(channels_) {
-      this->data = (uint8_t*)malloc(this->width * this->height * sizeof(uint8_t));
-    }
-
-    ~ImageData() {
-      if (this->data) free(this->data);
+        : width(width_),
+          height(height_),
+          channels(channels_),
+          data(std::vector<uint8_t>(width_ * height_ * channels_)) {
     }
 };
 

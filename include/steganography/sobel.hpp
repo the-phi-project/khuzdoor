@@ -17,7 +17,9 @@
 #include <cstdint>
 #include <cmath>  // ::abs(), std::round()
 
-#define SOBEL_MATRIX_SIZE_X 4  // edge matrix will be
+#include "Image.hpp"
+
+#define SOBEL_MATRIX_SIZE_X 3  // edge matrix will be
 #define SOBEL_MATRIX_SIZE_Y 3  // 3x3, as seen above
 
 //---------> [ Config. Separator ] <---------\\ 
@@ -31,10 +33,15 @@ namespace khuzdoor::steg {
 /// @returns the 0..255 value for grayscale intensity
 /// @note relies on the linear tranformation defined in
 ///       the SO answer https://stackoverflow.com/a/17619494
-inline uint8_t RGB2GS(uint8_t red, uint8_t green, uint8_t blue) {
+inline uint8_t RGB2GS_pixel(uint8_t red, uint8_t green, uint8_t blue) {
   double lum = (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
   return static_cast<uint8_t>(std::round(lum));
 }
+
+/// Convert an entire RGB image to a grayscale image
+/// @param img the RGB image
+/// @returns the ImageData struct for the grayscale image
+ImageData RGB2GS_image(const Image& img);
 
 }  // namespace khuzdoor::steg
 
