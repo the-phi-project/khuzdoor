@@ -21,14 +21,14 @@
 
 namespace khuzdoor::encryption {
 
-/// given a password, generate a seed for a PRNG such
+/// Given a password, generate a seed for a PRNG such
 /// that with the seed the PRNG is deterministic
 /// uses BLAKE2b under the hood with `crypto_generichash()`
 /// @param data usually a password, the actual data with which to seed
 /// @returns the actual unsigned char array that seeds the function
 std::array<unsigned char, randombytes_SEEDBYTES> generateSeed(const std::string& data);
 
-/// generate a list of deterministic seeded random indices [0, limit)
+/// Generate a list of deterministic seeded random indices [0, limit)
 /// at which a pixel can be LSBM encoded. First it generates a list of
 /// indices between `0` and `limit - 1`, then Fisher-Yates shuffles it,
 /// then selects the first `data_size * 8` of them and returns
@@ -38,6 +38,14 @@ std::array<unsigned char, randombytes_SEEDBYTES> generateSeed(const std::string&
 /// @returns the vector of random sorted NON-COLLIDING indices
 std::vector<uint32_t> seededRandomIndices(uint32_t minimum, uint32_t data_size, uint32_t limit,
                                           const std::string& password);
+
+/// Generates a seed based on a password and Fisher-Yates shuffles
+/// the list of indices, returning it shuffled (through the reference)
+/// @param indices the list of indices to shuffle
+/// @param password password with which to generate the data
+/// @returns DOESNT RETURN, TAKES IN INDICES AS A REFERENCE AND EDITS IT IN-PLACE
+void deterministicShuffle(std::vector<uint32_t>& indices, uint32_t num_indices, uint32_t limit,
+                          uint32_t minimum, const std::string& password);
 
 }  // namespace khuzdoor::encryption
 
