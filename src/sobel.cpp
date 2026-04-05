@@ -10,7 +10,7 @@
 
 #include <array>
 #include <cstdint>
-#include <cmath>  // ::abs(), std::round()
+#include <cmath>  // ::sqrt(), std::round()
 
 #include "Image.hpp"
 
@@ -28,4 +28,19 @@ khuzdoor::steg::ImageData khuzdoor::steg::RGB2GS_image(const khuzdoor::steg::Ima
   }
 
   return grayscale_img;
+}
+
+//------------[ Func. Implementation Separator ]------------\\ 
+
+uint16_t khuzdoor::steg::calculateSobels(const uint8_t matrix[SOBEL_X][SOBEL_Y]) {
+  int16_t G_x = (matrix[0][0] * -1) + /*(matrix[0][1] * 0) + */ (matrix[0][2] * +1) +
+                (matrix[1][0] * -2) + /*(matrix[1][1] * 0) + */ (matrix[1][2] * +2) +
+                (matrix[2][0] * -1) + /*(matrix[2][1] * 0) + */ (matrix[2][2] * +1);
+
+  int16_t G_y = (matrix[0][0] * -1) + (matrix[0][1] * -2) + (matrix[0][2] * -1) +
+                /* (matrix[1][0] * 0) + (matrix[1][1] * 0) + (matrix[1][2] * 0) + */
+                (matrix[2][0] * +1) + (matrix[2][1] * +2) + (matrix[2][2] * +1);
+
+  return static_cast<uint16_t>(
+    std::round(::sqrt(static_cast<double>((G_x * G_x)) + (G_y * G_y))));  // slow but accurate
 }

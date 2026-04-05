@@ -10,17 +10,31 @@
 #define SOBEL_HPP
 
 /************** SOBEL'S OPERATOR EXPLAINED **************
+Sobel's operator uses a 3x3 convolution matrix on image
+pixels to calculate the gradient of that matrix, and
+based on a threshold decides if the pixels are an edge
+  for example:
+    [ -1  0  1 ]         [ -1  -2  -1 ]
+    [ -2  0  2 ] = G_x   [  0   0   0 ] = G_y
+    [ -1  0  1 ]         [  1   2   1 ]
 
+We first take a 3x3 matrix of pixels, then multiply their
+grayscale values by the coefficients in the operator's
+matrix, then we can calculate the gradient with either
+G = sqrt(G_x^2 + G_y^2)  OR  G = |G_x| + |G_y| (faster)
+Then, we check G >= threshold ? edge : not edge
+
+https://en.wikipedia.org/wiki/Sobel_operator
 ********************************************************/
 
 #include <array>
 #include <cstdint>
-#include <cmath>  // ::abs(), std::round()
+#include <cmath>  // ::sqrt(), std::round()
 
 #include "Image.hpp"
 
-#define SOBEL_MATRIX_SIZE_X 3  // edge matrix will be
-#define SOBEL_MATRIX_SIZE_Y 3  // 3x3, as seen above
+#define SOBEL_X 3  // edge matrix will be
+#define SOBEL_Y 3  // 3x3, as seen above
 
 //---------> [ Config. Separator ] <---------\\ 
 
@@ -42,6 +56,9 @@ inline uint8_t RGB2GS_pixel(uint8_t red, uint8_t green, uint8_t blue) {
 /// @param img the RGB image
 /// @returns the ImageData struct for the grayscale image
 ImageData RGB2GS_image(const Image& img);
+
+/// Take in a 2D array and return the sobel
+uint16_t calculateSobels(const uint8_t matrix[SOBEL_X][SOBEL_Y]);
 
 }  // namespace khuzdoor::steg
 
