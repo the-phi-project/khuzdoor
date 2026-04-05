@@ -6,7 +6,7 @@
 // Original author: Zevi Berlin (zeviberlin@gmail.com)
 // Latest editor: Zevi Berlin (zeviberlin@gmail.com)
 
-#include "steganography/Image.hpp"
+#include "Image.hpp"
 
 #include <string>
 #include <vector>
