@@ -39,15 +39,16 @@ std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t minimum
                                                                 uint32_t data_size, uint32_t limit,
                                                                 const std::string& password) {
   uint32_t num_indices = data_size * 8;  // 8 bits for every byte
-  if (num_indices > limit) return {};    // Need enough space for non-colliding indices
+  uint32_t pool_size = limit - minimum;
+  if (num_indices > pool_size) return {};  // need enough space for non-colliding indices
 
   // derive seed from password
   std::array<unsigned char, randombytes_SEEDBYTES> seed =
     khuzdoor::encryption::generateSeed(password);
   // create array that contains all possible indices
-  std::vector<uint32_t> pool(limit);
-  for (uint32_t i = 0; i < limit; i++) {
-    pool[i] = i;
+  std::vector<uint32_t> pool(pool_size);
+  for (uint32_t i = 0; i < pool_size; i++) {
+    pool[i] = i + minimum;
   }
 
   // generate random data, `* 4` b/c 4 bytes per uint32_t
@@ -66,7 +67,7 @@ std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t minimum
     // with large limits, which are common for images as the limit scales
     // best case x^2 with the image size -- also any other type of thing
     // like `randombytes_uniform()` isnt deterministic which defeats the point
-    uint32_t j = i + (random_val % (limit - (i + minimum)));
+    uint32_t j = i + (random_val % (pool_size - i));
 
     std::swap(pool[i], pool[j]);
   }
@@ -89,13 +90,13 @@ void khuzdoor::encryption::deterministicShuffle(std::vector<uint32_t>& numbers,
   std::vector<uint8_t> random_buf(numbers.size() * 4);
   randombytes_buf_deterministic(random_buf.data(), random_buf.size(), seed.data());
 
-  uint32_t buf_offset = 0;
-  for (uint32_t i = 0; i < numbers.size(); i++) {
+  size_t buf_offset = 0;
+  for (size_t i = 0; i < numbers.size(); i++) {
     uint32_t random = 0;
     std::memcpy(&random, random_buf.data() + buf_offset, sizeof(uint32_t));
     buf_offset += sizeof(uint32_t);
 
-    uint32_t j = i + (random % (numbers.size() - i));
+    size_t j = i + (random % (numbers.size() - i));
 
     std::swap(numbers[i], numbers[j]);
   }
