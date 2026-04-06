@@ -48,8 +48,11 @@ std::vector<uint32_t> edgeEncodable(const ImageData& grayscale, uint32_t length)
 /// edge data has higher entropy so stored data looks less
 /// suspicious from a mathematical perspective
 /// @param img image wrapper class which contains host image data
+/// @param possible_indices the indices returned by `edgeEncodable()`
 /// @param data the data to write to the host image
-void encodeEdgeLSBMR(const Image& img, const std::string& data);
+/// @param password inputted password to shuffle indices
+void encodeEdgeLSBMR(const Image& img, std::vector<uint32_t>& possible_indices,
+                     const std::string& data, const std::string& password);
 
 //================={ Header Item Separator }=================\\ 
 
@@ -68,7 +71,8 @@ bool textureEncodable(const ImageData& grayscale, uint32_t length);
 /// suspicious from a mathematical perspective
 /// @param img image wrapper class which contains host image data
 /// @param data the data to write to the host image
-void encodeTextureLSBMR(const Image& img, const std::string& data);
+void encodeTextureLSBMR(const Image& img, const std::vector<uint32_t>& indices,
+                        const std::string& data, const std::string& password);
 
 }  // namespace khuzdoor::steg
 

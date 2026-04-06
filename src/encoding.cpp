@@ -25,7 +25,6 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
 
   const std::vector<uint32_t> length_indices = khuzdoor::encryption::seededRandomIndices(
     0, sizeof(uint32_t), sizeof(uint32_t) * 8 * 6, password + "$$length");
-
   for (uint32_t i = 0; i < length_indices.size(); i++) {
     khuzdoor::steg::writeLSBMR(img.at(length_indices[i] * img.getChannels()),
                                ((length >> (31 - i)) & 1U) != 0);
@@ -38,7 +37,6 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
   // BUG FIX: Not `* img.getChannels()` because thats done already below
   const std::vector<uint32_t> data_indices = khuzdoor::encryption::seededRandomIndices(
     (sizeof(uint32_t) * 8 * 6) + 1, length, img.getWidth() * img.getHeight(), password + "$$data");
-
 
   uint32_t byte = 0;
   uint8_t bit = 0;
@@ -53,6 +51,7 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
   }
 }
 
+//------------[ Func. Implementation Separator ]------------\\ 
 //------------[ Func. Implementation Separator ]------------\\ 
 
 #define EXP3(name) name[0], name[1], name[2]  // EXPAND 3 ITEM ARRAYS
@@ -86,4 +85,34 @@ std::vector<uint32_t> khuzdoor::steg::edgeEncodable(const khuzdoor::steg::ImageD
   }
 
   return (edges.size() >= (size_t)length * 8) ? edges : std::vector<uint32_t>{};
+}
+
+//------------[ Func. Implementation Separator ]------------\\ 
+
+void khuzdoor::steg::encodeEdgeLSBMR(const khuzdoor::steg::Image& img,
+                                     std::vector<uint32_t>& possible_indices,
+                                     const std::string& data, const std::string& password) {
+  uint32_t length = data.length();
+  khuzdoor::encryption::deterministicShuffle(possible_indices, password);  // edits in place: O(1)
+
+  for (uint32_t i = 0; i < sizeof(uint32_t) * 8; i++) {
+    khuzdoor::steg::writeLSBMR(img.at(possible_indices[i] * img.getChannels()),
+                               ((length >> (31 - i)) & 1U) != 0);
+    // shift by `31 - i` because shifting by 32 is undefined behavior
+    // same as using `7 - bit` below
+  }
+
+  //~~~~~~~< Misc. Separator >~~~~~~~\\
+
+  uint32_t byte = 0;
+  uint8_t bit = 0;
+  for (uint32_t i = (sizeof(uint32_t) * 8) + 1; i < data.size() * 8; i++) {
+    khuzdoor::steg::writeLSBMR(img.at(possible_indices[i] * img.getChannels()),
+                               (((uint8_t)data[byte] >> (7 - bit)) & 1U) > 0);
+
+    // clang-format off
+    if (bit == 7) { byte++; bit = 0; }
+    else { bit++; }
+    // clang-format on
+  }
 }
