@@ -39,14 +39,6 @@ std::array<unsigned char, randombytes_SEEDBYTES> generateSeed(const std::string&
 std::vector<uint32_t> seededRandomIndices(uint32_t minimum, uint32_t data_size, uint32_t limit,
                                           const std::string& password);
 
-/// Generates a seed based on a password and Fisher-Yates shuffles
-/// the list of indices, returning it shuffled (through the reference)
-/// @param indices the list of indices to shuffle
-/// @param password password with which to generate the data
-/// @returns DOESNT RETURN, TAKES IN INDICES AS A REFERENCE AND EDITS IT IN-PLACE
-void deterministicShuffle(std::vector<uint32_t>& indices, uint32_t num_indices, uint32_t limit,
-                          uint32_t minimum, const std::string& password);
-
 }  // namespace khuzdoor::encryption
 
 #endif /* RANDOM_HPP */

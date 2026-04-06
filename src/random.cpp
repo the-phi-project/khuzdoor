@@ -41,26 +41,14 @@ std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t minimum
   uint32_t num_indices = data_size * 8;  // 8 bits for every byte
   if (num_indices > limit) return {};    // Need enough space for non-colliding indices
 
+  // derive seed from password
+  std::array<unsigned char, randombytes_SEEDBYTES> seed =
+    khuzdoor::encryption::generateSeed(password);
   // create array that contains all possible indices
   std::vector<uint32_t> pool(limit);
   for (uint32_t i = 0; i < limit; i++) {
     pool[i] = i;
   }
-  khuzdoor::encryption::deterministicShuffle(pool, num_indices, limit, minimum, password);
-
-  // return first num_indices elements (which are now shuffled)
-  std::vector<uint32_t> indices(pool.begin(), pool.begin() + num_indices);
-  std::sort(indices.begin(), indices.end(), std::less<uint32_t>());
-  return indices;
-}
-
-//------------[ Func. Implementation Separator ]------------\\ 
-
-void deterministicShuffle(std::vector<uint32_t>& indices, uint32_t num_indices, uint32_t limit,
-                          uint32_t minimum, const std::string& password) {
-  // derive seed from password
-  std::array<unsigned char, randombytes_SEEDBYTES> seed =
-    khuzdoor::encryption::generateSeed(password);
 
   // generate random data, `* 4` b/c 4 bytes per uint32_t
   std::vector<uint8_t> random_buf(num_indices * 4);
@@ -80,6 +68,11 @@ void deterministicShuffle(std::vector<uint32_t>& indices, uint32_t num_indices, 
     // like `randombytes_uniform()` isnt deterministic which defeats the point
     uint32_t j = i + (random_val % (limit - (i + minimum)));
 
-    std::swap(indices[i], indices[j]);
+    std::swap(pool[i], pool[j]);
   }
+
+  // return first num_indices elements (which are now shuffled)
+  std::vector<uint32_t> indices(pool.begin(), pool.begin() + num_indices);
+  std::sort(indices.begin(), indices.end(), std::less<uint32_t>());
+  return indices;
 }
