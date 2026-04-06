@@ -76,3 +76,27 @@ std::vector<uint32_t> khuzdoor::encryption::seededRandomIndices(uint32_t minimum
   std::sort(indices.begin(), indices.end(), std::less<uint32_t>());
   return indices;
 }
+
+//------------[ Func. Implementation Separator ]------------\\ 
+
+void khuzdoor::encryption::deterministicShuffle(std::vector<uint32_t>& numbers,
+                                                const std::string& password) {
+  // derive seed from password
+  std::array<unsigned char, randombytes_SEEDBYTES> seed =
+    khuzdoor::encryption::generateSeed(password);
+
+  // generate random data, `* 4` b/c 4 bytes per uint32_t
+  std::vector<uint8_t> random_buf(numbers.size() * 4);
+  randombytes_buf_deterministic(random_buf.data(), random_buf.size(), seed.data());
+
+  uint32_t buf_offset = 0;
+  for (uint32_t i = 0; i < numbers.size(); i++) {
+    uint32_t random = 0;
+    std::memcpy(&random, random_buf.data() + buf_offset, sizeof(uint32_t));
+    buf_offset += sizeof(uint32_t);
+
+    uint32_t j = i + (random % (numbers.size() - i));
+
+    std::swap(numbers[i], numbers[j]);
+  }
+}

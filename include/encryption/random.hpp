@@ -39,6 +39,13 @@ std::array<unsigned char, randombytes_SEEDBYTES> generateSeed(const std::string&
 std::vector<uint32_t> seededRandomIndices(uint32_t minimum, uint32_t data_size, uint32_t limit,
                                           const std::string& password);
 
+/// Given a list of numbers, shuffle them "randomly" but in a
+/// deterministic manner based on a password-generated seed
+/// @param numbers the list of numbers
+/// @param password the password with which to generate the seed
+/// @returns NOTHING! Edits the list of numbers in place
+void deterministicShuffle(std::vector<uint32_t>& numbers, const std::string& password);
+
 }  // namespace khuzdoor::encryption
 
 #endif /* RANDOM_HPP */
