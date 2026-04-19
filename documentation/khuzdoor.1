@@ -1,23 +1,76 @@
-.TH khuzdoor 1 "4 March 2026" "man page version 0.0.2"
+.TH khuzdoor 1 "3 March 2026" "man page version 0.0.3"
 
 .SH NAME
-khuzdoor - Hide encrypted data inside a large block of "random" data (https://www.github.com/the-phi-project/khuzdoor)
- Name comes from Lord of the Rings "Dwarf Doors" which are perfectly camouflaged unless you know the password
+khuzdoor - Hide encrypted data inside images, and soon audio/video; steganography
+.I (https://www.github.com/the-phi-project/khuzdoor)
+
+Name comes from Lord of the Rings "Dwarf Doors" which are perfectly camouflaged unless you know the password
 
 .SH DESCRIPTION
 khuzoor is a powerful and efficient tool for encrypting text and files, then hiding the data
-noncontiguously inside of larger files (e.g. image, video, etc.) which effectively hides
-the data in plain sight such that an attacker has 
-.I no idea it even contains data
-because thats the best form of encryption. Of course the program
+inside of AV files such that an attacker who sees the AV file has
+.I no idea it even contains data.
+Of course the program
 .I also
 encrypts the data using a password-derived AEGIS-256 key so that the data is still protected.
+This manpage does
+.B not
+go into the methods through which the data is hidden, the Khuzdoor Thesis located at
+.I https://github.com/the-phi-project/khuzdoor/blob/main/Khuzdoor%20Thesis.pdf
+describes in grave detail the math and pipeline of this program.
 
 .SH WARNING
-It is bad practice to try and operate in this way on a binary executable because, while it is a
-source of large and "random" data, the executable will no longer execute and it would be quite
-obvious that it was tampered with. Try to use things that can be rendered even if extra data
-was shoved into it, like a PNG file.
+It is bad practice to try and operate on a digitally created image because they do not retain any
+natural artifacts in which data can be hidden. This is not to say that it's impossible to do
+steganography on it, but before using any host image, it should follow these three (3) guidelines:
+
+- The image is large and contains various "features", i.e. texture, edges, shadows, etc.
+
+- You are the only person in possession of an original copy of the image | 
+.B "If others have an original copy then they can simply check byte-for-byte against the encoded one to check for changed data"
+
+- The image is a photograph taken from a camera, rather than digitally borne
+
+.SH SYNOPSIS
+.B "khuzdoor [ --version | --help]"
+
+.B "khuzdoor [ ...MODE ]"
+[ ...PARAMETERS ] [ ...OPTIONS ]
+
+.SH MODES
+
+.B "-e, --encode"
+Encode data into an AV file
+
+.B "-d, --decode"
+Decode data from an AV file
+
+.SH PARAMETERS
+
+.BI "-p, --password" " secret  "
+Use
+.I secret
+as the password from which encryption and encoding details are derived
+
+.BI "-if, --in-file" " filepath  "
+Take input data from the file located at
+.I filepath
+for encoding
+
+.BI "-hf, --host-file" " filepath  "
+Use the AV file located at
+.I filepath
+to host the encoded data | For decryption mode this parameter is used to specify the AV file in which
+data is already encoded and should be decoded
+
+.BI "-of, --out-file" " filepath  "
+Write either the encoded image or the extracted data to the file at
+.I filepath
+
+.SH OPTIONS
+
+.B "-s, --strict"
+Force the program to use a stricter edge-finding mechanism | the final bit of the image will be 1 or 0 based on the presence of this flag
 
 .SH SEE ALSO
 .B "All projects below are located at"
@@ -31,9 +84,6 @@ Quantum-Safe TUI/CLI Encryption/Decryption Tool with a Contact Book
 
 .I "VEIL     "
 Virtual Environment for Invisible Logins: TUI/CLI anonymous ephemeral account creator
-
-.I "cloak     "
-Antitracking Chrome extension for maximum privacy
 
 .SH AUTHORS
 .B "Zevi Berlin     <zeviberlin@gmail.com>"
