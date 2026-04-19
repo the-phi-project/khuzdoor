@@ -12,7 +12,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "steganography/Image.hpp"
+#include "Image.hpp"
 #include "steganography/lsbmr.hpp"
 #include "encryption/random.hpp"
 
@@ -22,25 +22,26 @@ std::string khuzdoor::steg::decodeRandomLSBMR(const Image& img, const std::strin
   uint32_t length = 0;
 
   const std::vector<uint32_t> length_indices = khuzdoor::encryption::seededRandomIndices(
-    0, sizeof(uint32_t), sizeof(uint32_t) * 8 * 6, password + "$$length");
+    0, sizeof(uint32_t), sizeof(uint32_t) * 8 * 6 * img.getChannels(), password + "$$length");
 
   for (uint32_t i = 0; i < length_indices.size(); i++) {
     length <<= 1;
-    length += (uint32_t)khuzdoor::steg::readLSBMR(img.at(length_indices[i] * img.getChannels()));
+    length += (uint32_t)khuzdoor::steg::readLSBMR(img.at(length_indices[i]));
   }
 
   //~~~~~~~< Misc. Separator >~~~~~~~\\ 
 
   // BUG FIX: Not `* img.getChannels()` because thats done already below
   const std::vector<uint32_t> data_indices = khuzdoor::encryption::seededRandomIndices(
-    (sizeof(uint32_t) * 8 * 6) + 1, length, img.getWidth() * img.getHeight(), password + "$$data");
+    (sizeof(uint32_t) * 8 * 6) + 1, length, img.getWidth() * img.getHeight() * img.getChannels(),
+    password + "$$data");
 
   std::vector<char> data(length);
   uint32_t byte = 0;
   uint8_t bit = 0;
   for (uint32_t i = 0; i < data_indices.size(); i++) {
     data[byte] <<= 1;
-    data[byte] += khuzdoor::steg::readLSBMR(img.at(data_indices[i] * img.getChannels()));  // NOLINT
+    data[byte] += khuzdoor::steg::readLSBMR(img.at(data_indices[i]));  // NOLINT
     // ^ this is fine because it returns a bool which is either 1 or 0
 
     // clang-format off

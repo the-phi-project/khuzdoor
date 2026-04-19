@@ -24,9 +24,9 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
   uint32_t length = data.length();
 
   const std::vector<uint32_t> length_indices = khuzdoor::encryption::seededRandomIndices(
-    0, sizeof(uint32_t), sizeof(uint32_t) * 8 * 6, password + "$$length");
+    0, sizeof(uint32_t), sizeof(uint32_t) * 8 * 6 * img.getChannels(), password + "$$length");
   for (uint32_t i = 0; i < length_indices.size(); i++) {
-    khuzdoor::steg::writeLSBMR(img.at(length_indices[i] * img.getChannels()),
+    khuzdoor::steg::writeLSBMR(img.at(length_indices[i]),
                                ((length >> (31 - i)) & 1U) != 0);
     // shift by `31 - i` because shifting by 32 is undefined behavior
     // same as using `7 - bit` below
@@ -36,12 +36,13 @@ void khuzdoor::steg::encodeRandomLSBMR(const khuzdoor::steg::Image& img, const s
 
   // BUG FIX: Not `* img.getChannels()` because thats done already below
   const std::vector<uint32_t> data_indices = khuzdoor::encryption::seededRandomIndices(
-    (sizeof(uint32_t) * 8 * 6) + 1, length, img.getWidth() * img.getHeight(), password + "$$data");
+    (sizeof(uint32_t) * 8 * 6) + 1, length, img.getWidth() * img.getHeight() * img.getChannels(),
+    password + "$$data");
 
   uint32_t byte = 0;
   uint8_t bit = 0;
   for (uint32_t i = 0; i < data_indices.size(); i++) {
-    khuzdoor::steg::writeLSBMR(img.at(data_indices[i] * img.getChannels()),
+    khuzdoor::steg::writeLSBMR(img.at(data_indices[i]),
                                (((uint8_t)data[byte] >> (7 - bit)) & 1U) > 0);
 
     // clang-format off
@@ -106,7 +107,7 @@ void khuzdoor::steg::encodeEdgeLSBMR(const khuzdoor::steg::Image& img,
 
   uint32_t byte = 0;
   uint8_t bit = 0;
-  for (uint32_t i = (sizeof(uint32_t) * 8) + 1; i < data.size() * 8; i++) {
+  for (uint32_t i = 0; i < data.size() * 8; i++) {
     khuzdoor::steg::writeLSBMR(img.at(possible_indices[i] * img.getChannels()),
                                (((uint8_t)data[byte] >> (7 - bit)) & 1U) > 0);
 

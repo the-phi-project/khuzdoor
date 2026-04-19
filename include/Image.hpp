@@ -72,8 +72,8 @@ class Image {
     ///       which is negligible compared to the actual memory access. It's worth the cost
     ///       as it prevents buffer overflows and undefined behavior
     uint8_t* at(uint32_t idx) const {
-      return (idx > (uint32_t)(this->width * this->height * this->channels)) ? nullptr
-                                                                             : this->data + idx;
+      return (idx >= (uint32_t)(this->width * this->height * this->channels)) ? nullptr
+                                                                              : this->data + idx;
     }
 
     /// Take the (edited?) image and save the data

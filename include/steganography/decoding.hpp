@@ -13,7 +13,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "steganography/Image.hpp"
+#include "Image.hpp"
 #include "steganography/lsbmr.hpp"
 #include "steganography/encoding.hpp"
 #include "encryption/random.hpp"

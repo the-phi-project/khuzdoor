@@ -33,8 +33,9 @@ https://en.wikipedia.org/wiki/Sobel_operator
 
 #include "Image.hpp"
 
-#define SOBEL_X 3  // edge matrix will be
-#define SOBEL_Y 3  // 3x3, as seen above
+#define SOBEL_X 3           // edge matrix will be
+#define SOBEL_Y 3           // 3x3, as seen above
+#define EDGE_THRESHOLD 118  // the gradient of a sobel array must be >= 118 to be an edge
 
 //---------> [ Config. Separator ] <---------\\ 
 

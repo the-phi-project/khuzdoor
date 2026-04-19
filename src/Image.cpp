@@ -46,10 +46,10 @@ bool khuzdoor::steg::Image::save(const std::string& new_path) {
 
   const std::string ext = new_path.substr(ext_start_idx);
 
-  if (ext == "png") {
+  if (ext == ".png") {
     stbi_write_png(new_path.c_str(), this->width, this->height, this->channels, this->data,
                    this->width * this->channels);
-  } else if (ext == "bmp") {
+  } else if (ext == ".bmp") {
     stbi_write_bmp(new_path.c_str(), this->width, this->height, this->channels, this->data);
   } else {
     return false;

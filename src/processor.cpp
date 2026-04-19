@@ -13,6 +13,7 @@
 #include <vector>
 #include <span>
 #include <stdexcept>
+#include <optional>
 
 #include <nlohmann/json.hpp>
 #include <termcolor/termcolor.hpp>
@@ -180,4 +181,65 @@ int khuzdoor::cli::createIndicesForSplit(const std::vector<std::string>& split,
   const std::string mime = given;
   magic_close(detector);  // memory safety guys!
   //
+
+  // unlikely because theoretically the MappedFile wouldnt be a nonexistent file
+  [[unlikely]] if (mime.find('/') == std::string::npos) {  // means that the file couldn't be found
+    std::cout << tmc::red << "[ERROR] Could not find/open file `" << data.file.path << "`\n"
+              << tmc::reset;
+    return FILE_ERROR;
+  }
+
+  if (mime.starts_with("text")) {
+    std::cout
+      << tmc::red
+      << "[ERROR] It is highly unsafe to hide encrypted data inside of a text file\nUse --force "
+         "at your own discretion\n"
+      << tmc::reset;
+    return USAGE_ERROR;
+  }
+
+  if (mime.ends_with("empty")) {
+    std::cout << tmc::red
+              << "[ERROR] It is impossible to `hide` data inside of an empty file\nUse --force "
+                 "at your own discretion\n"
+              << tmc::reset;
+    return USAGE_ERROR;
+  }
+
+  /* VALID CASES */
+
+  if (mime.starts_with("application")) {
+    std::cout
+      << tmc::yellow
+      << "[WARNING] It is unsafe to hide encrypted data inside of a binary file because it "
+         "could prevent the file from being opened properly\nWould you like to continue (y/n)? "
+      << tmc::reset;
+
+    std::string confirm{};
+    std::getline(std::cin, confirm);
+    if (!(confirm.starts_with("y") || confirm.starts_with("Y"))) {
+      std::cout << "Exiting.\n";
+      return USAGE_ERROR;
+    }
+  }
+
+  if (mime == "image/png") {
+    std::optional<size_t> idx1 = khuzdoor::cli::findIDATBlob(8, data);
+    if (!idx1) {
+      std::cout << "failed to find idx1\n";
+      return FILE_ERROR;
+    }
+
+    std::cout << "index of first IDAT section: " << idx1.value();
+
+    std::optional<size_t> idx2 = khuzdoor::cli::findIDATBlob(idx1.value(), data);
+    if (!idx2) {
+      std::cout << "failed to find idx2\n";
+      return FILE_ERROR;
+    }
+
+    std::cout << "index of second IDAT section: " << idx2.value();
+
+    return SUCCESS;
+  }
 }
