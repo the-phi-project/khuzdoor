@@ -1,4 +1,4 @@
-# im a bit slammed right now studying for various AP's and finals -- I will be working on all phi project repos a ton over the summer
+# this is nonfunctional, and on pause for business comp, stardance, and job
 
 # Khuzdoor
 "Dwarf Door" (from LOTR)  -  Hide encrypted data inside a large block of random data
